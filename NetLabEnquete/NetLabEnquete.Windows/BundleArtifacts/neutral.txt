@@ -1,0 +1,4 @@
+MainPackage=d:\git\NetLabEnquete\NetLabEnquete\NetLabEnquete.Windows\bin\Release\NetLabEnquete.Windows_1.1.0.1_Bundle\NetLabEnquete.Windows_1.1.0.1_AnyCPU.appx
+SymbolPackage=d:\git\NetLabEnquete\NetLabEnquete\NetLabEnquete.Windows\AppPackages\NetLabEnquete.Windows_1.1.0.1_Test\NetLabEnquete.Windows_1.1.0.1_AnyCPU.appxsym
+ResourcePack=d:\git\NetLabEnquete\NetLabEnquete\NetLabEnquete.Windows\bin\Release\NetLabEnquete.Windows_1.1.0.1_Bundle\NetLabEnquete.Windows_1.1.0.1_scale-140.appx
+ResourcePack=d:\git\NetLabEnquete\NetLabEnquete\NetLabEnquete.Windows\bin\Release\NetLabEnquete.Windows_1.1.0.1_Bundle\NetLabEnquete.Windows_1.1.0.1_scale-180.appx
