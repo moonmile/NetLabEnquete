@@ -151,6 +151,7 @@
             </HubSection>
         </Hub>
         <Image 
+            x:Name="imageLogo"
             HorizontalAlignment="Left" Margin="34,0,0,59" Width="315" Source="Assets/NetLabLogo.png" Height="57" VerticalAlignment="Bottom"/>
         <Button 
             Click="OnClickUpdate"

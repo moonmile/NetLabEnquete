@@ -215,26 +215,12 @@ namespace NetLabEnquete
 
             var cl = new HttpClient();
             var text = await cl.GetStringAsync(url);
-            text = HtmlConv.HTMLtoXHTML(text);
 
-            text = Regex.Replace(text, "type=(\\w+)", "type='$1'");
-            text = Regex.Replace(text, "value=(\\w+)", "value='$1'");
-            text = Regex.Replace(text, "size=(\\w+)", "size='$1'");
-            text = Regex.Replace(text, "maxlength=(\\w+)", " maxlength='$1'");
-            text = text.Replace("&", "&amp;");
+            var hdoc = new HtmlAgilityPack.HtmlDocument();
+            hdoc.LoadHtml(text);
+            var xdoc = hdoc.ToXDocument();
+            return xdoc;
 
-            var st = new StringReader(text);
-            try
-            {
-                var doc = XDocument.Load(st);
-                return doc;
-            }
-            catch (Exception ex)
-            {
-                var dlg = new MessageDialog("XDocument のパースに失敗しました");
-                dlg.ShowAsync();
-            }
-            return null;
         }
 
         /// <summary>
@@ -433,8 +419,9 @@ namespace NetLabEnquete
             var lstb = doc * "td" % "class" == "qbody";
             if (lst.Count == 0) return null;
             if (lstb.Count == 0) return null;
-            var el = lst[0];
-            var elb = lstb[0];
+
+            // タイトルを取得
+            this.pageTitle.Text = doc * "title";
 
             // 親のtable タグを取得
             var els = new ExElements();
@@ -535,130 +522,5 @@ namespace NetLabEnquete
             await dlg.ShowAsync();					
         }
 
-    }
-
-    /// <summary>
-    /// おおざっぱに HTML形式を XHTML形式に変換するクラス
-    /// </summary>
-    public class HtmlConv
-    {
-        class Lex
-        {
-            int pos = -1;
-            string _html = "";
-            public Lex(string html) { _html = html; }
-            public string getc()
-            {
-                if (pos < _html.Length - 1)
-                {
-                    try
-                    {
-                        pos++;
-                        return _html.Substring(pos, 1);
-                    }
-                    catch (Exception ex)
-                    {
-                        var msg = ex.Message;
-                        return "";
-                    }
-                }
-                else
-                {
-                    return "";
-                }
-            }
-            public void unget()
-            {
-                if (pos >= 0) pos--;
-            }
-            public string getw()
-            {
-                string ch = getc();
-                if (ch == "") return "";
-                switch (ch)
-                {
-                    case "<":
-                        if (getc() == "!")
-                        {
-                            return "<!";
-                        }
-                        else
-                        {
-                            unget();
-                            return "<";
-                        }
-                    case ">": return ">";
-                    default:
-                        string s = ch;
-                        if ('A' <= ch[0] && ch[0] <= 'Z' ||
-                             'a' <= ch[0] && ch[0] <= 'z' ||
-                             ch[0] <= '_')
-                        {
-                            while (true)
-                            {
-                                ch = getc();
-                                if (ch == "") break;
-                                if ('0' <= ch[0] && ch[0] <= '9' ||
-                                     'A' <= ch[0] && ch[0] <= 'Z' ||
-                                     'a' <= ch[0] && ch[0] <= 'z' ||
-                                     ch[0] == '_')
-                                {
-                                }
-                                else
-                                {
-                                    unget();
-                                    break;
-                                }
-                                s += ch;
-                            }
-                        }
-                        return s;
-                }
-            }
-        }
-
-        public static string HTMLtoXHTML(string html)
-        {
-            string[] tags = { "meta", "link", "img", "br", "input" };
-            var lex = new Lex(html);
-            string xhtml = "";
-            while (true)
-            {
-                string w = lex.getw();
-                if (w == "") break;
-                if (w == "<!")
-                {
-                    // > まで読み飛ばし
-                    while (true)
-                    {
-                        w = lex.getw();
-                        if (w == "") break;
-                        if (w == ">") break;
-                    }
-                    continue;
-                }
-                xhtml += w;
-                if (w == "<")
-                {
-                    w = lex.getw();
-                    xhtml += w;
-                    if (tags.Any(x => x == w))
-                    {
-                        while (true)
-                        {
-                            w = lex.getw();
-                            if (w == "") break;
-                            if (w == ">")
-                            {
-                                xhtml += "/>";
-                                break;
-                            }
-                            xhtml += w;
-                        }
-                    }
-                }
-            }
-            return xhtml;
-        }
     }
 }

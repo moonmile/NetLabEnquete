@@ -316,11 +316,6 @@ namespace EnqueteCheck
             }
         }
 
-
-
-
-
-
         public static string HTMLtoXHTML(string html)
         {
             string[] tags = { "meta", "link", "img", "br", "input" };
@@ -364,5 +359,6 @@ namespace EnqueteCheck
             }
             return xhtml;
         }
+
     }
 }
